@@ -2,6 +2,9 @@
     <v-app>
         <v-app-bar>
             <v-app-bar-title>Mona Lisa</v-app-bar-title>
+            <v-spacer></v-spacer>
+            <v-select class="mt-6" density="compact" variant="solo" label="View by Location" v-model="locationSelect"
+                :items="locations" clearable></v-select>
 
             <v-spacer></v-spacer>
             <v-text-field label="Search by NPC name" density="compact" variant="solo" append-inner-icon="mdi-magnify"
@@ -31,9 +34,10 @@ import { ref, computed } from 'vue'
 import Airtable from 'airtable';
 
 const npcs = ref([])
+const locations = ref([])
 const nameSearch = ref('')
-const locationSearch = ref('')
 const searchResults = computed(() => updateSearchResults())
+const locationSelect = ref('')
 
 
 Airtable.configure({
@@ -58,23 +62,46 @@ base('Table 1')
             }
             npcs.value.push(npc)
 
+            if (!locations.value.includes(npc.location)) {
+                locations.value.push(npc.location)
+            }
+            locations.value.sort()
+
         })
         fetchNextPage()
     })
 
 function updateSearchResults() {
-    if (!nameSearch.value) {
-        console.log("No Input")
-        return npcs.value
+
+    if (!nameSearch.value && !locationSelect.value) {
+        console.log("No filters!")
+        return npcs.value.sort(compare)
     }
 
+    if (!locationSelect.value) {
+        return npcs.value.filter(npc =>
+            npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())
+        ).sort(compare)
+    }
 
-    return npcs.value.filter((npc =>
-        npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())),
+    if (!nameSearch.value) {
+        return npcs.value.filter(npc =>
+            npc.location === locationSelect.value
+        ).sort(compare)
+    }
+
+    return npcs.value.filter(npc =>
+        npc.location === locationSelect.value && npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())
     )
+
 }
 
 
+function compare(a, b) {
+    if (a.name < b.name) { return -1 }
+    if (a.name > b.name) { return 1 }
+    return 0
+}
 
 
 
