@@ -16,7 +16,7 @@
 
             <v-row>
                 <v-col>
-                    <v-card variant="outlined" class="mx-auto" max-width="400" v-for="npc in searchResults">
+                    <v-card variant="outlined" class="my-4 pa-2 mx-auto" max-width="400" v-for="npc in searchResults">
                         <v-img max-height="300" v-bind:src="npc.image"></v-img>
                         <v-card-title>{{ npc.name }}</v-card-title>
                         <v-card-subtitle>{{ npc.description }}</v-card-subtitle>
