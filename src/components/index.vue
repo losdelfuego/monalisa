@@ -3,8 +3,8 @@
         <v-app-bar>
             <v-app-bar-title>Mona Lisa</v-app-bar-title>
             <v-spacer></v-spacer>
-            <v-select class="mt-6" density="compact" variant="solo" label="View by Location" v-model="locationSelect"
-                :items="locations" clearable></v-select>
+            <v-combobox class="mt-6" density="compact" variant="solo" label="View by Location" v-model="locationSelect"
+                :items="locations" clearable></v-combobox>
 
             <v-spacer></v-spacer>
             <v-text-field label="Search by NPC name" density="compact" variant="solo" append-inner-icon="mdi-magnify"
