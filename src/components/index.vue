@@ -17,7 +17,9 @@
             <v-row>
                 <v-col>
                     <v-card variant="outlined" class="my-4 pa-2 mx-auto" max-width="400" v-for="npc in searchResults">
-                        <v-img max-height="300" v-bind:src="npc.image"></v-img>
+                        <v-img max-height="300" v-bind:src="npc.image"><v-overlay v-if="npc.deceased" v-model="overlay"
+                                contained absolute class="align-center justify-center"><span
+                                    class="text-h5 text-red bg-black font-weight-bold">DECEASED</span></v-overlay></v-img>
                         <v-card-title>{{ npc.name }}</v-card-title>
                         <v-card-subtitle>{{ npc.description }}</v-card-subtitle>
                         <v-card-text>Last Known Location: {{ npc.location.join(", ") }}</v-card-text>
@@ -39,6 +41,7 @@ const locations = ref([])
 const nameSearch = ref('')
 const searchResults = computed(() => updateSearchResults())
 const locationSelect = ref('')
+const overlay = true
 
 Airtable.configure({
     endpointUrl: "https://api.airtable.com",
@@ -77,6 +80,10 @@ base('Table 1')
 
                 if (record.get('Faction')) {
                     npc.faction = record.get('Faction')
+                }
+
+                if (record.get('Deceased')) {
+                    npc.deceased = true
                 }
 
                 npcs.value.push(npc)
