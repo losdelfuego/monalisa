@@ -56,7 +56,6 @@ base('Table 1')
 
             try {
 
-                // const image = record.get('Image')
                 const npc = {
                     "name": record.get('Name'),
                     "location": location,
@@ -72,8 +71,7 @@ base('Table 1')
                 }
 
                 if (!record.get('Image')) {
-                    npc.image = "src/assets/not_found.jpeg"
-
+                    npc.image = "/not_found.png"
                 } else {
                     npc.image = record.get('Image')[0].url
                 }
