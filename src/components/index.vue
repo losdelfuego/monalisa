@@ -3,12 +3,14 @@
         <v-app-bar>
             <v-app-bar-title>Mona Lisa</v-app-bar-title>
             <v-spacer></v-spacer>
-            <v-combobox class="mt-6" density="compact" variant="solo" label="View by Location" v-model="locationSelect"
+            <v-switch class="mt-6" label="Current Contacts Only" color="primary" v-model="currentlyKnown"></v-switch>
+            <v-spacer></v-spacer>
+            <v-combobox class="mt-6" density="compact" variant="solo" label="By Location" v-model="locationSelect"
                 :items="locations" clearable></v-combobox>
 
             <v-spacer></v-spacer>
-            <v-text-field label="Search by NPC name" density="compact" variant="solo" append-inner-icon="mdi-magnify"
-                single-line hide-details v-model="nameSearch" clear-icon="mdi-close-circle" clearable>
+            <v-text-field label="By name" density="compact" variant="solo" append-inner-icon="mdi-magnify" single-line
+                hide-details v-model="nameSearch" clear-icon="mdi-close-circle" clearable>
             </v-text-field>
 
         </v-app-bar>
@@ -39,10 +41,12 @@ import { ref, computed } from 'vue'
 import Airtable from 'airtable';
 
 const npcs = ref([])
+const npcList = ref([])
 const locations = ref([])
 const nameSearch = ref('')
 const searchResults = computed(() => updateSearchResults())
 const locationSelect = ref('')
+const currentlyKnown = ref()
 const overlay = true
 
 Airtable.configure({
@@ -129,29 +133,46 @@ base('Table 1')
 
 function updateSearchResults() {
 
+    //if there are no name or location searches, return everything, but sorted
     if (!nameSearch.value && !locationSelect.value) {
         console.log("No filters!")
-        return npcs.value.sort(compare)
+        npcList.value = npcs.value.sort(compare)
     }
 
-    if (!locationSelect.value) {
-        return npcs.value.filter(npc =>
+    //if there are no location searches, return all name search matches, but sorted
+    else if (!locationSelect.value) {
+        npcList.value = npcs.value.filter(npc =>
             npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())
         ).sort(compare)
     }
 
-    if (!nameSearch.value) {
-        return npcs.value.filter(npc =>
+    //if there are no name searches, return all location search matches, but sorted
+    else if (!nameSearch.value) {
+        npcList.value = npcs.value.filter(npc =>
             npc.location.includes(locationSelect.value)
         ).sort(compare)
     }
 
-    return npcs.value.filter(npc =>
-        npc.location === locationSelect.value && npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())
-    )
+    //assuming both searches exist, return everything that matches both searches, but sorted
+    else {
+        npcList.value = npcs.value.filter(npc =>
+            npc.location.includes(locationSelect.value) && npc.name.toLowerCase().includes(nameSearch.value.toLowerCase())
+        )
+    }
+
+    //take the list from above, and filter by the known switch if relevant.
+    if (currentlyKnown.value) {
+        console.log("known only")
+        return npcList.value.filter(npc =>
+            npc.current == true)
+    }
+    else {
+        return npcList.value
+    }
+
 }
 
-
+//little sorting script to alphabetize
 function compare(a, b) {
     if (a.name < b.name) { return -1 }
     if (a.name > b.name) { return 1 }
