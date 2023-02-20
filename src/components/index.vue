@@ -20,7 +20,7 @@
                         <v-img max-height="300" v-bind:src="npc.image"><v-overlay v-if="npc.deceased" v-model="overlay"
                                 contained absolute class="align-center justify-center"><span
                                     class="text-h5 text-red bg-black font-weight-bold">DECEASED</span></v-overlay></v-img>
-                        <v-card-title>{{ npc.name }}</v-card-title>
+                        <v-card-title>{{ npc.name }}<span v-if="npc.pronouns">({{ npc.pronouns }})</span></v-card-title>
                         <v-card-subtitle>{{ npc.description }}</v-card-subtitle>
                         <v-card-text>Last Known Location: {{ npc.location.join(", ") }}</v-card-text>
                         <v-card-text v-if="npc.faction">Affiliations: {{ npc.faction }}</v-card-text>
@@ -82,6 +82,10 @@ base('Table 1')
 
                 if (record.get('Deceased')) {
                     npc.deceased = true
+                }
+
+                if (record.get('Pronouns')) {
+                    npc.pronouns = record.get('Pronouns')
                 }
 
                 npcs.value.push(npc)
