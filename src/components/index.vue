@@ -51,7 +51,7 @@ const overlay = true
 
 Airtable.configure({
     endpointUrl: "https://api.airtable.com",
-    apiKey: 'keyZ5ixWh8VGnbyu6'
+    apiKey: 'patCs1veReEJPZ4vR.07fe2b3ceae4ec040302c98f6541d5bbe4f5dd9d15bd8847a651bc8dfda33d9f'
 });
 const base = Airtable.base('appduBHdfZ4KDNSqi');
 
